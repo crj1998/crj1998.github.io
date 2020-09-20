@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>crj1998</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <link rel="shortcut icon" href="./images/code.png">
+    <link rel="alternate" type="application/rss+xml" title="Chen Renjie" href="feed.xml">
+    <!--style-->
+    <link rel="stylesheet" href="./css/main.css">
+    <!--Jquery-->
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <!--customs js-->
+    <script type="text/javascript" src="./js/main.js"></script>
+</head>
+
+<body onselectstart="return false"> 
+    <span class="mobile btn-mobile-menu">
+        <i class="icon icon-list btn-mobile-menu__icon"></i>
+        <i class="icon icon-x-circle btn-mobile-close__icon hidden"></i>
+    </span>
+    <header class="panel-cover" style="background-image: url(./images/background-cover.jpg" class="panel-cover)">
+        <div class="panel-main">
+            <div class="panel-main__inner panel-inverted">
+                <div class="panel-main__content" style="cursor: pointer" id="activation">
+                    <img src="./images/profile.png" class="user-image" alt="My Profile Photo" id="vinyl">
+                    <h1 class="panel-cover__title panel-title">Chen Renjie</h1>
+
+                    <hr class="panel-cover__divider">
+                    <p class="panel-cover__description">Data Science & Machine Learning</p>
+                    <p class="panel-cover__description_tiny">🧡Shanghai Jiao Tong University🧡</p>
+                    <hr class="panel-cover__divider panel-cover__divider--secondary">
+                </div> <!-- panel-main__content -->
+                                    <div class="navigation-wrapper">
+                        
+                        <nav class="cover-navigation navigation--social" style="margin-left: 0em;">
+                            <ul class="navigation">
+                                <!-- Email -->
+                                <li class="navigation__item">
+                                    <a href="mailto:crj1998@sjtu.edu.cn" title="Email crj1998@sjtu.edu.cn" target="_blank">
+                                        <i class="icon icon-mail"></i>
+                                        <span class="label">Email</span>
+                                    </a>
+                                </li>
+                                <!-- GitHub -->
+                                <li class="navigation__item">
+                                    <a href="https://www.github.com/crj1998" title="crj1998 on GitHub" target="_blank">
+                                        <i class="icon icon-social-github"></i>
+                                        <span class="label">GitHub</span>
+                                    </a>
+                                </li>
+                                <!-- LinkedIn -->
+                                <li class="navigation__item">
+                                    <a href="https://leetcode-cn.com/u/maze/" title="LinkedIn" target="_blank">
+                                        <i class="icon icon-pencil"></i>
+                                        <span class="label">Leetcode</span>
+                                    </a>
+                                </li>
+                                <!-- Twitter -->
+                                <li class="navigation__item">
+                                    <a href="https://www.cnblogs.com/crj1998/" title="Twitter" target="_blank">
+                                        <i class="icon icon-archive"></i>
+                                        <span class="label">cnblog</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                        <nav class="cover-navigation cover-navigation--primary" style="width: 100%">
+                            <ul class="navigation" style="width: 100%">
+                                <li class="navigation__item"><a href="./CV.html" title="Link to Chen Renjie Resume" class="blog-button" target="_blank">Resume</a></li>
+                            </ul>
+                        </nav>
+                    </div> <!-- navigation-wrapper -->
+            </div> <!-- panel-main__inner panel-inverted -->
+            <div class="panel-cover--overlay"></div>
+        </div> <!-- panel-main -->
+    </header>
+    <footer>
+        <div class="footer__copyright">
+            &copy; 2020 <a href="http://crj1998.github.io">Maze</a>. All rights reserved.
+        </div>
+    </footer>
+    <audio src="./music/2.m4a" id="player" preload="auto" autoplay="autoplay" loop="loop" controls="controls" hidden></audio>
+    <script>
+    vinyl.style.webkitAnimationPlayState = "paused";
+    // activation.onmouseover = function(){
+    //     console.log("onmouseover");
+    // }
+    // activation.onmouseout = function(){
+    //     console.log("onmouseout");
+    // }
+    // 
+    const list = [{"cover": "./images/cover1.jpg", "audio":"./music/1.m4a"}, {"cover": "./images/cover2.jpg", "audio":"./music/2.m4a"}];
+    var len = list.length;
+    var index = len-1;
+    activation.ondblclick = function () {
+        index = (index+1)%len;
+        player.src = list[index].audio;
+        vinyl.src = list[index].cover;
+        player.currentTime = 0;
+        player.play();
+    }
+
+    activation.onclick = function() {        
+        if (player.paused) {
+            vinyl.src = list[index].cover;
+            player.play();
+            vinyl.style.webkitAnimationPlayState = "running";
+        } else { 
+            player.pause(); 
+            vinyl.style.webkitAnimationPlayState = "paused";
+        }
+    }
+    window.onload = function(){
+        // vinyl.click();
+    }
+    
+    </script>
+</body>
+
+</html>
