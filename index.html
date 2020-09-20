@@ -81,7 +81,7 @@
             &copy; 2020 <a href="http://crj1998.github.io">Maze</a>. All rights reserved.
         </div>
     </footer>
-    <audio src="./music/2.m4a" id="player" preload="auto" autoplay="autoplay" loop="loop" controls="controls" hidden></audio>
+    <audio src="./music/1.m4a" id="player" preload="auto" autoplay="autoplay" loop="loop" controls="controls" hidden></audio>
     <script>
     vinyl.style.webkitAnimationPlayState = "paused";
     // activation.onmouseover = function(){
@@ -93,7 +93,7 @@
     // 
     const list = [{"cover": "./images/cover1.jpg", "audio":"./music/1.m4a"}, {"cover": "./images/cover2.jpg", "audio":"./music/2.m4a"}, {"cover": "./images/cover3.jpg", "audio":"./music/3.m4a"}];
     var len = list.length;
-    var index = len-1;
+    var index = 0;
     activation.ondblclick = function () {
         index = (index+1)%len;
         player.src = list[index].audio;
