@@ -16,7 +16,7 @@
     <script type="text/javascript" src="./js/main.js"></script>
 </head>
 
-<body onselectstart="return false"> 
+<body onselectstart="return false">
     <img src="https://upload-images.jianshu.io/upload_images/13843118-3b26d0c20b8378b0.jpg" hidden="1">
     <span class="mobile btn-mobile-menu">
         <i class="icon icon-list btn-mobile-menu__icon"></i>
@@ -28,52 +28,51 @@
                 <div class="panel-main__content" style="cursor: pointer" id="activation">
                     <img src="./images/profile.png" class="user-image" alt="My Profile Photo" id="vinyl">
                     <h1 class="panel-cover__title panel-title">Chen Renjie</h1>
-
                     <hr class="panel-cover__divider">
                     <p class="panel-cover__description">Data Science & Machine Learning</p>
                     <p class="panel-cover__description_tiny">🏆Shanghai Jiao Tong University🔥</p>
                     <hr class="panel-cover__divider panel-cover__divider--secondary">
                 </div> <!-- panel-main__content -->
-                                    <div class="navigation-wrapper">
-                        
-                        <nav class="cover-navigation navigation--social" style="margin-left: 0em;">
-                            <ul class="navigation">
-                                <!-- Email -->
-                                <li class="navigation__item">
-                                    <a href="mailto:crj1998@sjtu.edu.cn" title="Email crj1998@sjtu.edu.cn" target="_blank">
-                                        <i class="icon icon-mail"></i>
-                                        <span class="label">Email</span>
-                                    </a>
-                                </li>
-                                <!-- GitHub -->
-                                <li class="navigation__item">
-                                    <a href="https://www.github.com/crj1998" title="crj1998 on GitHub" target="_blank">
-                                        <i class="icon icon-social-github"></i>
-                                        <span class="label">GitHub</span>
-                                    </a>
-                                </li>
-                                <!-- Leetcode -->
-                                <li class="navigation__item">
-                                    <a href="https://leetcode-cn.com/u/crj1998/" title="Leetcode" target="_blank">
-                                        <i class="icon icon-pencil"></i>
-                                        <span class="label">Leetcode</span>
-                                    </a>
-                                </li>
-                                <!-- CSDN -->
-                                <li class="navigation__item">
-                                    <a href="https://www.cnblogs.com/crj1998/" title="CSDN" target="_blank">
-                                        <i class="icon icon-archive"></i>
-                                        <span class="label">cnblog</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                        <nav class="cover-navigation cover-navigation--primary" style="width: 100%">
-                            <ul class="navigation" style="width: 100%">
-                                <li class="navigation__item"><a href="./CV.html" title="Link to Chen Renjie Resume" class="blog-button" target="_blank">Resume</a></li>
-                            </ul>
-                        </nav>
-                    </div> <!-- navigation-wrapper -->
+                <div class="navigation-wrapper">
+                    <nav class="cover-navigation navigation--social" style="margin-left: 0em;">
+                        <ul class="navigation">
+                            <!-- Email -->
+                            <li class="navigation__item">
+                                <a href="mailto:crj1998@sjtu.edu.cn" title="Email crj1998@sjtu.edu.cn" target="_blank">
+                                    <i class="icon icon-mail"></i>
+                                    <span class="label">Email</span>
+                                </a>
+                            </li>
+                            <!-- GitHub -->
+                            <li class="navigation__item">
+                                <a href="https://www.github.com/crj1998" title="crj1998 on GitHub" target="_blank">
+                                    <i class="icon icon-social-github"></i>
+                                    <span class="label">GitHub</span>
+                                </a>
+                            </li>
+                            <!-- Leetcode -->
+                            <li class="navigation__item">
+                                <a href="https://leetcode-cn.com/u/crj1998/" title="Leetcode" target="_blank">
+                                    <i class="icon icon-pencil"></i>
+                                    <span class="label">Leetcode</span>
+                                </a>
+                            </li>
+                            <!-- CSDN -->
+                            <li class="navigation__item">
+                                <a href="https://www.cnblogs.com/crj1998/" title="CSDN" target="_blank">
+                                    <i class="icon icon-social-blogger"></i>
+                                    <span class="label">cnblog</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <nav class="cover-navigation cover-navigation--primary" style="width: 100%">
+                        <ul class="navigation" style="width: 100%">
+                            <li class="navigation__item"><a href="./CV.html" title="Link to Chen Renjie Resume" class="blog-button" target="_blank">Resume</a></li>
+                            <li class="navigation__item"><a href="http://47.116.135.220:8888/tree" title="Link to Jupyter Notebook" class="blog-button" target="_blank">Jupyter</a></li>
+                        </ul>
+                    </nav>
+                </div> <!-- navigation-wrapper -->
             </div> <!-- panel-main__inner panel-inverted -->
             <div class="panel-cover--overlay"></div>
         </div> <!-- panel-main -->
@@ -93,43 +92,42 @@
     //     console.log("onmouseout");
     // }
     // 
-    const list = [{"cover": "./images/cover1.jpg", "audio":"./music/1.m4a"}, {"cover": "./images/cover2.jpg", "audio":"./music/2.m4a"}, {"cover": "./images/cover3.jpg", "audio":"./music/3.m4a"}];
+    const list = [{ "cover": "./images/cover1.jpg", "audio": "./music/1.m4a" }, { "cover": "./images/cover2.jpg", "audio": "./music/2.m4a" }, { "cover": "./images/cover3.jpg", "audio": "./music/3.m4a" }];
     var len = list.length;
     var index = 0;
     var status = 0;
-    activation.ondblclick = function () {
-        index = (index+1)%len;
+    activation.ondblclick = function() {
+        index = (index + 1) % len;
         player.src = list[index].audio;
         player.currentTime = 0;
         player.play();
     }
 
-    activation.onclick = function(){
-        status = 1;       
+    activation.onclick = function() {
+        status = 1;
         if (player.paused) {
             player.play();
-        } else { 
-            player.pause(); 
+        } else {
+            player.pause();
         }
     }
-    player.oncanplay = function(){
-        if(status==0){return ;}
+    player.oncanplay = function() {
+        if (status == 0) { return; }
         vinyl.src = list[index].cover;
     }
-    player.onplay = function(){
+    player.onplay = function() {
         vinyl.src = list[index].cover;
         vinyl.style.webkitAnimationPlayState = "running";
     }
-    player.onpause = function(){
+    player.onpause = function() {
         vinyl.style.webkitAnimationPlayState = "paused";
     }
-    player.onended = function(){
+    player.onended = function() {
         player.play();
     }
-    window.onload = function(){
+    window.onload = function() {
         // vinyl.click();
     }
-    
     </script>
 </body>
 
