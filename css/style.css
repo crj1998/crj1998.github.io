@@ -111,6 +111,8 @@ p {
 
 .sidebar-wrapper .container-block {
     padding: 30px;
+    padding-bottom: 15px;
+    padding-top: 15px;
 }
 
 .sidebar-wrapper .container-block-title {
