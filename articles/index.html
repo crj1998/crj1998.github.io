@@ -130,13 +130,16 @@
                 // change errorColor to blue
                 errorColor: '#1500ff',
                 // delimiters: [{ left: '$', right: '$', asciimath: true }],
+                delimiters: [
+                    { left: "$", right: "$", display: false },
+                ],
             })
         ]
     });
     converter.setFlavor("github");
     var aid = getQueryVariable("aid")||"220322_transformer";
     GET({
-        "url": `${aid}.txt`,
+        "url": `${aid}.md`,
         "data": {},
         "success": function(res){
             let html = converter.makeHtml(res);
