@@ -1,0 +1,735 @@
+---
+id: 221123_redis
+date: 2022-11-23
+title: Redis for Python
+author: crj1998@sjtu.edu.cn
+---
+
+# Redis & Python
+## Redis
+
+> Redis是用C语言开发的一个开源的高性能键值对数据库，它拥有高性能、持多种数据结构、丰富的功能以及高可用分布式等特点的非关系型数据库。 reids中的key都是字符串，redis主要分为五大数据结构：字符串(`string`)、哈希(`hash`)、列表(`list`)、集合(`set`)、有序集合(`zset`)。
+
+应用场景：
+- string:验证码，普通计数
+- hash:个人信息，
+- list:消息队列
+- set:求交集、并集、差集
+- zset:排行榜
+
+###  Redis之keys
+`keys *` 查看所有键。`keys s* ` 模糊匹配。
+```
+127.0.0.1:6379> keys *
+1) "s1"
+2) "h1"
+3) "ss1"
+4) "l1"
+5) "z1"
+
+127.0.0.1:6379> keys s*
+1) "s1"
+2) "ss1"
+```
+
+`exists` 判断键是否存在，存在返回1，不存在返回0。
+```
+127.0.0.1:6379> exists s1
+(integer) 1
+127.0.0.1:6379> exists b1
+(integer) 0
+```
+
+`expire` 设置过期时间。`expire key time`。
+```
+127.0.0.1:6379> expire s1 20
+(integer) 1
+```
+
+`ttl` 查看存活时间，-1表示永久存活，-2表示已过期。
+```
+127.0.0.1:6379> ttl s1
+(integer) 12
+127.0.0.1:6379> ttl s1
+(integer) -2
+127.0.0.1:6379> ttl l1
+(integer) -1
+```
+
+`persist` 持久化键。
+```
+127.0.0.1:6379> expire s1 100
+(integer) 1
+127.0.0.1:6379> ttl s1
+(integer) 97
+127.0.0.1:6379> persist s1
+(integer) 1
+127.0.0.1:6379> ttl s1
+(integer) -1
+```
+
+`rename` 对键重命名。
+```
+127.0.0.1:6379> rename ss1 ss
+OK
+127.0.0.1:6379> keys *
+1) "s1"
+2) "ss"
+3) "h1"
+4) "l1"
+5) "z1"
+```
+
+`del` 删除键。
+```
+127.0.0.1:6379> del s1
+(integer) 1
+127.0.0.1:6379> keys *
+1) "ss"
+2) "h1"
+3) "l1"
+4) "z1"
+```
+
+
+### Redis之String
+`set` 设置key值，若key存在，则覆盖key值，不存在，则新建。`set key value`
+
+`get` 获取对应key值。`get key`
+```
+127.0.0.1:6379> set s1 a
+OK
+127.0.0.1:6379> get s1
+"a"
+```
+
+`setnx` 仅当key值不存在时才能设置指定value，key存在则返回0，没有任何操作。`setnx key value`
+```
+127.0.0.1:6379> setnx s1 b
+(integer) 0
+127.0.0.1:6379> get s1
+"a"
+127.0.0.1:6379> set s2 b
+OK
+127.0.0.1:6379> get s2
+"b"
+```
+
+`setex` 设置value并设置过期时间。`setex key seconds value`。
+
+```
+127.0.0.1:6379> setex s1 20 b
+OK
+127.0.0.1:6379> ttl s1
+(integer) 16
+127.0.0.1:6379> get s1
+"b"
+127.0.0.1:6379> ttl s1
+(integer) -2
+127.0.0.1:6379> get s1
+(nil)
+```
+
+
+`mset` 同时设置多个键值对，mget获取多个键值。`mset k1 v1 [k2 v2 ...]`
+```
+127.0.0.1:6379> mset s1 a s2 b s3 c
+OK
+127.0.0.1:6379> mget s1 s2 s3
+1) "a"
+2) "b"
+3) "c"
+```
+
+`append` 字符串拼接。`append key value`
+```
+127.0.0.1:6379> get s1
+"a"
+127.0.0.1:6379> append s1 bc
+(integer) 3
+127.0.0.1:6379> get s1
+"abc"
+```
+
+`getrange` 范围取值 `getrange ket start end`
+```
+127.0.0.1:6379> get s5
+"0123456"
+127.0.0.1:6379> getrange s5 0 4
+"01234"
+127.0.0.1:6379> getrange s5 2 4
+"234"
+```
+
+`setrange` 替换指定下标的值 `setrange key offset value`
+```
+127.0.0.1:6379> get s1
+"abc"
+127.0.0.1:6379> setrange s1 1 5
+(integer) 3
+127.0.0.1:6379> get s1
+"a5c"
+```
+
+
+`strlen` 返回value长度 `strlen key`
+```
+127.0.0.1:6379> strlen s1
+(integer) 3
+```
+
+
+`incr` 和 `incrby` 计数功能，针对value为数字，非数字将报错
+```
+#incr自增1，incrby增加指定数
+127.0.0.1:6379> incr s1
+(error) ERR value is not an integer or out of range
+127.0.0.1:6379> set s4 10
+OK
+127.0.0.1:6379> incr s4
+(integer) 11
+127.0.0.1:6379> incrby s4 9
+(integer) 20
+127.0.0.1:6379> get s4
+"20"
+#decr自减1，decrby减少指定值
+127.0.0.1:6379> decr s4
+(integer) 19
+127.0.0.1:6379> decrby s4 5
+(integer) 14
+127.0.0.1:6379> get s4
+"14"
+```
+
+
+### Redis之Hash
+`hset` 添加，存在则更新，不存在则新增，用法：hset key field value `hset key field value`
+```
+127.0.0.1:6379> hset user name zs
+(integer) 1
+```
+`hget` 获取指定key对应的field的值 `hget key field`
+```
+127.0.0.1:6379> hget user name
+"zs"
+```
+
+`hmset` 批量新增字段和值 `hmset key f1 v1 [f2 v2 ...]`
+```
+127.0.0.1:6379> hmset user age 10 gender 1
+OK
+```
+
+`hmget` 批量获取 `hmget key f1 [f2 ...]`
+```
+127.0.0.1:6379> hmget user name age gender
+1) "zs"
+2) "10"
+3) "1"
+```
+
+`hgetall` 获取所有key的字段和对应的value `hgetall value`
+```
+127.0.0.1:6379> hgetall user
+1) "name"
+2) "zs"
+3) "age"
+4) "10"
+5) "gender"
+6) "1"
+```
+
+`hkeys` 获取key中所有字段 `hkeys keys`
+```
+127.0.0.1:6379> hkeys user
+1) "name"
+2) "age"
+3) "gender"
+```
+`hvals` 获取key中所有字段对应的值 `hvals keys`
+```
+127.0.0.1:6379> hvals user
+1) "zs"
+2) "10"
+3) "1"
+```
+
+`hexists` 判断某key对应的field是否存在，存在返回1，不存在返回0
+```
+127.0.0.1:6379> hexists user name
+(integer) 1
+127.0.0.1:6379> hexists user salary
+(integer) 0
+```
+
+`hsetnx` 中key对应的field存在则不增加，不存在则增加
+```
+127.0.0.1:6379> hsetnx user name ls
+(integer) 0
+127.0.0.1:6379> hsetnx user hobby ball
+(integer) 1
+```
+`hlen` 返回key中field个数
+```
+127.0.0.1:6379> hlen user
+(integer) 5
+```
+
+
+`hincrby` 设置指定数，针对field为数字类型
+```
+127.0.0.1:6379> hincrby user name 10
+(error) ERR hash value is not an integer
+127.0.0.1:6379> hincrby user age 10
+(integer) 43
+127.0.0.1:6379> hget user age
+"43"
+```
+`hincrbyfloat` 设置浮点数
+```
+127.0.0.1:6379> hincrbyfloat user score 10.5
+"110.5"
+127.0.0.1:6379> hget user score
+"110.5"
+```
+
+`hdel` 删除key指定的field
+```
+127.0.0.1:6379> hkeys user
+1) "name"
+2) "age"
+3) "gender"
+4) "hobby"
+5) "score"
+127.0.0.1:6379> hdel user score
+(integer) 1
+127.0.0.1:6379> hkeys user
+1) "name"
+2) "age"
+3) "gender"
+4) "hobby"
+```
+
+
+### Redis之List
+`lpush` 向左添加，往下标为0插入
+```
+127.0.0.1:6379> lpush l1 a b c
+(integer) 3
+#lrange根据索引获取指定范围内的值
+127.0.0.1:6379> lrange l1 0 -1
+1) "c"
+2) "b"
+3) "a"
+```
+`rpush` 尾插
+```
+127.0.0.1:6379> rpush l2 a b c
+(integer) 3
+127.0.0.1:6379> lrange l2 0 -1
+1) "a"
+2) "b"
+3) "c"
+```
+
+`lpushx` key存在则添加 ，`key` 不存在则什么也不做。
+```
+127.0.0.1:6379> lpushx l2 d
+(integer) 4
+127.0.0.1:6379> lpushx l2 a
+(integer) 5
+127.0.0.1:6379> lrange l2 0 -1
+1) "a"
+2) "d"
+3) "a"
+4) "b"
+5) "c"
+127.0.0.1:6379> lrange l1 0 -1
+(empty list or set)
+127.0.0.1:6379> lpushx l1 a
+(integer) 0
+```
+
+
+`lrange` 根据索引范围取值，lindex根据索引取单个值，索引从0开始
+```
+127.0.0.1:6379> lrange l2 0 -1
+1) "a"
+2) "d"
+3) "a"
+4) "b"
+5) "c"
+127.0.0.1:6379> lindex l2 2
+"a"
+```
+
+
+`lpop` 删除头部，`rpop` 删除尾部
+```
+127.0.0.1:6379> lrange l2 0 -1
+1) "a"
+2) "d"
+3) "a"
+4) "b"
+5) "c"
+127.0.0.1:6379> lpop l2
+"a"
+127.0.0.1:6379> rpop l2
+"c"
+127.0.0.1:6379> lrange l2 0 -1
+1) "d"
+2) "a"
+3) "b"
+```
+
+
+`rpoplpush` 列表1 列表2  将l1的尾部元素删除并插入到l2头部
+```
+127.0.0.1:6379> lrange l1 0 -1
+1) "a"
+2) "b"
+3) "c"
+4) "d"
+127.0.0.1:6379> lrange l2 0 -1
+1) "e"
+2) "f"
+3) "g"
+127.0.0.1:6379> rpoplpush l1 l2
+"d"
+127.0.0.1:6379> lrange l1 0 -1
+1) "a"
+2) "b"
+3) "c"
+127.0.0.1:6379> lrange l2 0 -1
+1) "d"
+2) "e"
+3) "f"
+4) "g"
+```
+
+
+`linsert` 列表名 after/before pivot value 
+```
+#将value插入到pivot的后面/前面
+127.0.0.1:6379> lrange l2 0 -1
+1) "d"
+2) "e"
+3) "f"
+4) "g"
+127.0.0.1:6379> linsert l2 before e c
+(integer) 5
+127.0.0.1:6379> linsert l2 after d b
+(integer) 6
+127.0.0.1:6379> lrange l2 0 -1
+1) "d"
+2) "b"
+3) "c"
+4) "e"
+5) "f"
+6) "g"
+```
+
+`lset` 根据索引插入
+```
+127.0.0.1:6379> lset l2 0 z
+OK
+127.0.0.1:6379> lrange l2 0 -1
+1) "z"
+2) "b"
+3) "c"
+4) "e"
+5) "f"
+6) "g"
+```
+
+`lrem` key count value,删除指定的值几个
+```
+127.0.0.1:6379> lrange l1 0 -1
+1) "a"
+2) "b"
+3) "c"
+4) "a"
+5) "d"
+6) "c"
+127.0.0.1:6379> lrem l1 1 a
+(integer) 1
+127.0.0.1:6379> lrem l1 2 c
+(integer) 2
+127.0.0.1:6379> lrange l1 0 -1
+1) "b"
+2) "a"
+3) "d"
+```
+
+
+### Redis之Set
+`sadd` 批量添加，有去重功能，保留后插入的那一个
+```
+127.0.0.1:6379> sadd s1 a b c a d
+(integer) 4
+```
+`smembers` 返回指定key的所有值
+```
+127.0.0.1:6379> smembers s1
+1) "b"
+2) "d"
+3) "a"
+4) "c"
+```
+`srandmember` 随机返回指定个数的值
+```
+127.0.0.1:6379> srandmember s1 2
+1) "b"
+2) "d"
+```
+`sismember` 判断某个在不在集合内
+```
+127.0.0.1:6379> sismember s1 a
+(integer) 1
+127.0.0.1:6379> sismember s1 ff
+(integer) 0
+```
+
+`scard` 返回集合内个数
+```
+127.0.0.1:6379> scard s1
+(integer) 4
+```
+
+`sinter` 求两个集合的交集
+```
+127.0.0.1:6379> sinter s1 s3
+1) "b"
+2) "c"
+```
+`sunion` 求两个集合的并集
+```
+127.0.0.1:6379> sunion s1 s3
+1) "b"
+2) "d"
+3) "a"
+4) "c"
+```
+`sdiff` 求两个集合的差集
+```
+127.0.0.1:6379> sdiff s1 s3
+1) "a"
+```
+
+
+`sinterstore` 将s1和s3的交集保存s2
+```
+127.0.0.1:6379> sinterstore s2 s1 s3
+(integer) 2
+127.0.0.1:6379> smembers s2
+1) "b"
+2) "c"
+```
+`sunionstore` 将s1和s3的并集保存s2
+```
+127.0.0.1:6379> sunionstore s2 s1 s3
+(integer) 4
+127.0.0.1:6379> smembers s2
+1) "b"
+2) "d"
+3) "a"
+4) "c"
+```
+`sdiffstore` 将s1和s3的差集保存s2
+```
+127.0.0.1:6379> sdiffstore s2 s1 s3
+(integer) 1
+127.0.0.1:6379> smembers s2
+1) "a"
+```
+
+
+`spop` 随机删除指定个数的值
+```
+127.0.0.1:6379> spop s1 2
+1) "c"
+2) "b"
+```
+# `srem` 删除集合内指定的值
+```
+127.0.0.1:6379> srem s1 a
+(integer) 1
+```
+# `smove` 将集合s2 中指定的值移到s1，s2将删除此值
+```
+127.0.0.1:6379> smove s2 s1 a
+(integer) 1
+127.0.0.1:6379> smembers s1
+1) "a"
+127.0.0.1:6379> smembers s2
+(empty list or set)
+```
+
+### Redis之zset
+`zadd` 批量添加，`zadd key score member`
+```
+127.0.0.1:6379> zadd z1 60 a 70 b 50 c 80 d 65 e
+(integer) 5
+```
+`zrange` 范围查询，按照score递增排列
+```
+127.0.0.1:6379> zrange z1 0 -1
+1) "c"
+2) "a"
+3) "e"
+4) "b"
+5) "d"
+```
+`withscores` 显示出成员及其分数score
+```
+127.0.0.1:6379> zrange z1 0 -1 withscores
+ 1) "c"
+ 2) "50"
+ 3) "a"
+ 4) "60"
+ 5) "e"
+ 6) "65"
+ 7) "b"
+ 8) "70"
+ 9) "d"
+10) "80"
+```
+
+
+`zcard` 返回key中成员个数
+```
+127.0.0.1:6379> zcard z1
+(integer) 5
+#zcount key min max; 返回score为min - max 中的成员个数
+127.0.0.1:6379> zcount z1 60 100
+(integer) 4
+```
+`zrank` 获取某个成员的排名
+```
+127.0.0.1:6379> zrank z1 b
+(integer) 3
+```
+
+`zrangebyscore` 按照score区间以及limit限制递增输出。`zrangebyscore key min max limit start num withscores`
+```
+127.0.0.1:6379> zrangebyscore z1 60 100 limit 0 3 withscores
+1) "a"
+2) "60"
+3) "e"
+4) "65"
+5) "b"
+6) "70"
+```
+
+
+`zrevrange` 按照分数递减排列，和zrange相反
+```
+127.0.0.1:6379> zrevrange z1 0 -1 withscores
+ 1) "d"
+ 2) "80"
+ 3) "b"
+ 4) "70"
+ 5) "e"
+ 6) "65"
+ 7) "a"
+ 8) "60"
+ 9) "c"
+10) "50"
+```
+`zrevrangebyscore key max min limit start num withscores`
+zrevrangebyscore按照score区间以及个数限制递减排列输出
+```
+127.0.0.1:6379> zrevrangebyscore z1 100 60 limit 0 3 withscores
+1) "d"
+2) "80"
+3) "b"
+4) "70"
+5) "e"
+6) "65"
+```
+zrevrank按score值递增排列的排名
+```
+127.0.0.1:6379> zrevrank z1 d
+(integer) 0
+```
+
+
+`zrem` 移除一个或几个成员，返回移除的个数，成员不存在则返回0
+```
+127.0.0.1:6379> zrange z1 0 -1 withscores
+1) "a"
+2) "60"
+3) "e"
+4) "65"
+5) "c"
+6) "70"
+7) "d"
+8) "80"
+127.0.0.1:6379> zrem z1 a c
+(integer) 2
+127.0.0.1:6379> zrange z1 0 -1
+1) "e"
+2) "d"
+127.0.0.1:6379> zrem z1 f
+(integer) 0
+```
+
+
+`zremrangebyscore` 移除指定score区间的member
+```
+127.0.0.1:6379> zrange z1 0 -1 withscores
+ 1) "e"
+ 2) "65"
+ 3) "c"
+ 4) "75"
+ 5) "d"
+ 6) "80"
+ 7) "a"
+ 8) "90"
+ 9) "f"
+10) "92"
+127.0.0.1:6379> zremrangebyscore z1 60 80
+(integer) 3
+127.0.0.1:6379> zrange z1 0 -1 withscores
+1) "a"
+2) "90"
+3) "f"
+4) "92"
+```
+
+
+`zremrangebyrank` 移除下标区间内的member,(递增排序)
+```
+127.0.0.1:6379> zrange z1 0 -1 withscores
+ 1) "c"
+ 2) "75"
+ 3) "b"
+ 4) "80"
+ 5) "d"
+ 6) "85"
+ 7) "a"
+ 8) "90"
+ 9) "f"
+10) "92"
+11) "e"
+12) "96"
+127.0.0.1:6379> zremrangebyrank z1 0 2
+(integer) 3
+127.0.0.1:6379> zrange z1 0 -1 withscores
+1) "a"
+2) "90"
+3) "f"
+4) "92"
+5) "e"
+6) "96"
+```
+
+`zincrby` `zincrby key count member，score`自增count
+```
+127.0.0.1:6379> zincrby z1 10 a
+"100"
+127.0.0.1:6379> zrange z1 0 -1
+1) "f"
+2) "e"
+3) "a"
+```
