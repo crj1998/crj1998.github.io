@@ -139,7 +139,7 @@
     converter.setFlavor("github");
     var aid = getQueryVariable("aid")||"220322_transformer";
     GET({
-        "url": `_posts/${aid}.txt`,
+        "url": `/post/articles/${aid}.txt`,
         "data": {},
         "success": function(res){
             let html = converter.makeHtml(res);
