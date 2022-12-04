@@ -1,0 +1,108 @@
+# Git
+## 安装和配置Git
+
+```
+# Centos安装git
+$ yum -y install git
+# 配置git基本信息
+$ git config --global user.name "Your Name"
+$ git config --global user.email "email@example.com"
+```
+
+## 创建repository
+```
+# 工作空间下创建一个空目录
+$ mkdir proj
+$ cd proj
+$ pwd
+/root/workspace/proj
+```
+通过`git init`命令把当前空目录初始化为git仓库。使用`ls -ah`命令可以看到目录下隐藏的`.git`文件夹。
+```
+$ git init
+Initialized empty Git repository in /root/workspace/proj/.git/
+```
+
+
+```
+# 把文件添加到版本库
+# 单个文件添加
+$ git add <file>
+# 添加当前目录中的所有文件
+$ git add -A
+# 添加当前目录中的所有文件更改
+$ git add .
+
+# 把暂存文件提交到版本库
+git commit -m 'first commit'
+# 添加文件并提交一次
+git commit filename -m 'commit message'
+
+# 添加文件并提交暂存文件
+git commit -am 'insert commit message'
+
+# 更改你的最新提交消息
+git commit --amend 'new commit message' 
+```
+
+```
+# 状态检查
+$ git status
+# 差异对比
+$ git diff
+# 历史版本查看
+$ git log
+# 历史命令查看
+$ git reflog
+```
+## 版本回退
+在Git中，用`HEAD`表示当前版本，上一个版本就是`HEAD^`，上上一个版本就是`HEAD^^`，当然往上100个版本写100个^比较容易数不过来，所以写成`HEAD~100`。
+```
+# 回退到上个版本
+$ git reset --hard HEAD^
+# 回退到指定commit id的版本
+$ git reset --hard <commit id>
+```
+
+```
+# 从缓存区把文件恢复到工作目录
+$ git checkout -- <file>
+
+# 删除文件
+$ git rm <file>
+```
+
+## 分支管理
+```
+# 查看分支
+$ git branch
+
+# 创建分支
+$ git branch <NAME>
+# 删除分支
+$ git branch -d <NAME>
+# 切换分支
+$ git checkout <NAME>
+# 创建并切换分支
+$ git checkout -b <NAME>
+# switch切换分支
+$ git switch <NAME>
+# switch创建并切换分支
+$ git switch -c <NAME>
+
+# 合并指定分支到当前分支
+$ git merge <name>
+```
+
+```
+# 暂存工作现场
+$ git stash
+# 查看所有工作现场
+$ git stash list
+# 恢复工作现场
+$ git stash apply
+# 删除工作现场
+$ git stash drop
+# 恢复并删除工作现场
+$ git stash pop
+```

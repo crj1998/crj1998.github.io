@@ -1,0 +1,130 @@
+# SQLite
+## 创建和删除表
+```
+CREATE TABLE [database.]table(
+   col1 datatype  PRIMARY KEY,
+   col2 datatype,
+   col3 datatype,
+   .....
+   colN datatype,
+);
+DROP TABLE [database.]table;
+```
+## 插入数据
+```
+# 插入数据
+INSERT INTO table (col1, col2, ..., colN)
+VALUES (val1, val2, ..., valN);
+
+# 为表中的所有列添加值时，可以不需要在查询中指定列名称。但要确保值的顺序与列在表中的顺序一致。
+INSERT INTO table 
+VALUES (val1, val2, ..., valN);
+
+# 忽略数据库中已经存在的数据，如果数据库没有数据，就插入新的数据，如果有数据的话就跳过这条数据
+INSERT IGNORE INTO table (col1, col2, ..., colN) 
+VALUES (val1, val2, ..., valN);
+
+# 表中有PRIMARY，或者UNIQUE索引的话，当表中已经存在这条数据，则用新数据替换，如果没有数据，效果则和insert into一样；
+INSERT INTO table (col1, col2, ..., colN) 
+VALUES (val1, val2, ..., valN)
+ON DUPLICATE KEY UPDATE coli = vali, colj = volj;
+
+# 根据select的条件判断是否插入，可以不光通过PRIMARY和UNIQUE来判断，也可通过其它条件。
+INSERT INTO table (col1, col2, ..., colN) SELECT (val1, val2, ..., valN) FROM DUAL WHERE NOT EXISTS (SELECT * FROM table WHERE condition)
+
+# 如果存在PRIMARY或UNIQUE相同的记录，则先删除掉。再插入新记录。
+REPLACE INTO table (col1, col2, ..., colN) VALUES (val1, val2, ..., valN);
+REPLACE INTO table SET coli = vali, colj = volj;
+```
+
+## 查询数据
+```
+SELECT col1, col2, ..., colN FROM table;
+SELECT * FROM table;
+```
+DISTINCT 关键字与 SELECT 语句一起使用，来消除所有重复的记录，并只获取唯一一次记录。
+
+## 更新数据
+```
+UPDATE table
+SET col1 = val1, col2 = val2...., colN = valN
+WHERE condition;
+```
+## 删除数据
+```
+DELETE FROM table WHERE condition;
+# 删除全部数据
+DELETE FROM table;
+```
+
+## 字句
+```
+SELECT col1, col2
+FROM table1, table2
+WHERE conditions
+GROUP BY col1, col2
+HAVING conditions
+ORDER BY col1, col2
+```
+### WHERE 字句
+```
+WHERE [condition]
+```
+### LIMIT 子句
+```
+LIMIT [no of rows] OFFSET [row num]
+```
+### ORDER BY 字句
+```
+# 将返回结果按照 升序/降序 排列
+ORDER BY col1, col2, .. colN [ASC | DESC]
+```
+### GROUP BY 字句
+SQLite 的 GROUP BY 子句用于与 SELECT 语句一起使用，来对相同的数据进行分组。
+在 SELECT 语句中，GROUP BY 子句放在 WHERE 子句之后，放在 ORDER BY 子句之前。
+```
+GROUP BY col1, col2, .. colN
+```
+
+### HAVING 子句
+HAVING 子句允许指定条件来过滤将出现在最终结果中的分组结果。
+WHERE 子句在所选列上设置条件，而 HAVING 子句则在由 GROUP BY 子句创建的分组上设置条件。
+```
+HAVING conditions
+```
+
+### 别名
+表 别名的基本语法如下：
+
+SELECT column1, column2....
+FROM table_name AS alias_name
+WHERE [condition];
+列 别名的基本语法如下：
+
+SELECT column_name AS alias_name
+FROM table_name
+WHERE [condition];
+
+
+```sql
+# 查看数据库列表
+SHOW DATABASES;
+# 创建数据库
+CREATE DATABASE <database>;
+# 删除数据库
+DROP DATABASE <database>;
+# 选择数据库
+USE <database>;
+```
+
+
+一、DML与DDL的含义：
+
+1、DML（Data Manipulation Language）数据操作语言-数据库的基本操作，SQL中处理数据等操作统称为数据操纵语言,简而言之就是实现了基本的“增删改查”操作。包括的关键字有：select、update、delete、insert、merge
+
+2、DDL（Data Definition Language）数据定义语言-用于定义和管理 SQL 数据库中的所有对象的语言，对数据库中的某些对象(例如，database,table)进行管理。包括的关键字有：
+create、alter、drop、truncate、comment、grant、revoke
+
+二、DML与DDL的区别：
+1.DML操作是可以手动控制事务的开启、提交和回滚的。
+2.DDL操作是隐性提交的，不能rollback！
